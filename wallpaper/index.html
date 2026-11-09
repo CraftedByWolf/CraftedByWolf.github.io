@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suriya Live Wallpaper</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0c;--text:#ecebe6;--muted:#8d8b85;--accent:#ff7a45;--panel:rgba(20,20,22,.72);--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;cursor:default;user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.mono{font:500 1.05vh "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#ui{position:relative;height:100%;display:grid;grid-template-columns:1.05fr 1fr;gap:4vw;padding:9vh 5vw 8vh}
+.left{display:flex;flex-direction:column}
+.clock{font:400 17vh/0.9 "Instrument Serif",serif;letter-spacing:-.02em}
+.clock i{color:var(--accent);font-style:normal;animation:blink 2s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+.date{font:italic 400 4vh "Instrument Serif",serif;color:#c9c7c0;margin:1.2vh 0 3vh}
+.now{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:1.4vh;padding:2.2vh 2.4vh;backdrop-filter:blur(6px);max-width:44vw}
+.now h2{font:500 3vh/1.25 Inter,sans-serif;margin:.8vh 0 .4vh}
+.now .sub{color:#bdbbb4;font-size:1.7vh}
+.track{height:.6vh;background:rgba(255,255,255,.08);border-radius:1vh;margin-top:1.6vh;overflow:hidden}
+.track span{display:block;height:100%;background:var(--accent);transition:width 1s linear}
+.next{margin-top:1.4vh;font-size:1.6vh;color:var(--muted)}
+.next b{color:var(--text);font-weight:500}
+.sched{margin-top:2.6vh;display:flex;flex-direction:column;gap:.5vh}
+.sched div{display:grid;grid-template-columns:11vh 1fr;font-size:1.5vh;color:var(--muted);padding:.2vh 0}
+.sched div.on{color:var(--text)}.sched div.on span:first-child{color:var(--accent)}
+.sched div.past{opacity:.4}
+.sched span:first-child{font-family:"JetBrains Mono",monospace;font-size:1.3vh;padding-top:.15vh}
+.right{display:flex;flex-direction:column;justify-content:center;gap:1.6vh}
+.head{margin-bottom:.6vh}
+.head h1{font:400 5.4vh/1.05 "Instrument Serif",serif;margin-top:.8vh}
+.head h1 i{color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:1.4vh;padding:1.8vh 2.2vh;backdrop-filter:blur(6px)}
+.card.hl{border-color:rgba(255,122,69,.55)}
+.card h3{font:500 2.1vh/1.35 Inter,sans-serif;margin-top:.6vh}
+.card .m{display:flex;justify-content:space-between}
+.bar{display:flex;height:.8vh;border-radius:1vh;overflow:hidden;position:relative;margin:1.2vh 0 .8vh}
+.bar span{height:100%}
+.bar i{position:absolute;top:-.4vh;bottom:-.4vh;width:.25vh;background:#fff;box-shadow:0 0 1vh #fff}
+.foot{display:flex;justify-content:space-between}
+.quote{position:fixed;left:5vw;bottom:3.4vh;font:italic 2vh "Instrument Serif",serif;color:var(--muted)}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="ui">
+  <div class="left">
+    <div class="mono" id="kicker">● Suriya K S · MSc AI</div>
+    <div class="clock" id="clock">00<i>:</i>00</div>
+    <div class="date" id="date"></div>
+    <div class="now">
+      <div class="mono">Right now</div>
+      <h2 id="nowTitle"></h2>
+      <div class="sub" id="nowSub"></div>
+      <div class="track"><span id="nowBar"></span></div>
+      <div class="next" id="next"></div>
+    </div>
+    <div class="sched" id="sched"></div>
+  </div>
+  <div class="right">
+    <div class="head">
+      <div class="mono" id="weekLbl"></div>
+      <h1 id="weekTitle"></h1>
+    </div>
+    <div class="card" id="cDsa"><div class="m"><span class="mono">DSA · 07:00</span><span class="mono" id="dsaStep"></span></div><h3 id="dsa"></h3></div>
+    <div class="card" id="cAi"><div class="m"><span class="mono">AI track · 15:00</span><span class="mono" id="aiPhase"></span></div><h3 id="ai"></h3></div>
+    <div class="card" id="cSql"><div class="m"><span class="mono">SQL · 20:30</span></div><h3 id="sql"></h3></div>
+    <div class="card"><div class="mono">Week project</div><h3 id="proj" style="font-size:1.8vh;color:#c9c7c0"></h3></div>
+    <div>
+      <div class="bar" id="bar"></div>
+      <div class="foot"><span class="mono" id="pct"></span><span class="mono" id="left"></span></div>
+    </div>
+  </div>
+</div>
+<div class="quote" id="quote"></div>
+
+<script src="plan.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const QUOTES = ["Brute force first. Then optimise.", "Watch once, code twice.", "Consistency beats intensity.",
+  "If you can't rebuild it from a blank file, you don't know it yet.", "Ship, don't polish.", "One commit a day.",
+  "Struggle 30 minutes before the solution.", "Sleep is part of the plan."];
+const toMin = s => { const [h,m]=s.split(":").map(Number); return h*60+m; };
+const pad = n => String(n).padStart(2,"0");
+const LABEL = {dsa:"cDsa", ai:"cAi", sql:"cSql"};
+
+function currentBlock(blocks, mins){
+  for (let i=0;i<blocks.length;i++){
+    let a=toMin(blocks[i][0]), b=toMin(blocks[i][1]);
+    if (b<=a){ // crosses midnight
+      if (mins>=a || mins<b){ const len=b+1440-a, el=(mins>=a?mins-a:mins+1440-a); return {i, el, len}; }
+    } else if (mins>=a && mins<b) return {i, el:mins-a, len:b-a};
+  }
+  // gap before first block: show the first block as "next"
+  return {i:-1, el:0, len:1};
+}
+
+let lastDay = "";
+function tick(){
+  const now = new Date(), mins = now.getHours()*60+now.getMinutes();
+  $("clock").innerHTML = pad(now.getHours()) + "<i>:</i>" + pad(now.getMinutes());
+  const dayKey = now.toDateString();
+  const info = planDayInfo(now);
+  // early morning before wake-up still counts as the previous night's sleep
+  const blocks = ROUTINE[info.kind];
+  const cb = currentBlock(blocks, mins);
+  const cur = cb.i>=0 ? blocks[cb.i] : null;
+  const nxt = blocks[(cb.i+1) % blocks.length];
+  const topic = {dsa: info.dsa, ai: info.ai, sql: info.sql, proj: info.week.ai.project, rev: "Revise today's DSA + AI notes, push to GitHub", msc: "Stay present in class. Note anything to link back to the plan.", life:"", sleep:"Phone away. Tomorrow: " + (planDayInfo(new Date(now.getTime()+86400000)).dsa)};
+  if (cur){
+    $("nowTitle").textContent = cur[2];
+    $("nowSub").textContent = topic[cur[3]] || (cur[0] + " – " + cur[1]);
+    $("nowBar").style.width = (cb.el/cb.len*100).toFixed(1) + "%";
+    const leftMin = cb.len - cb.el;
+    $("next").innerHTML = `${Math.floor(leftMin/60) ? Math.floor(leftMin/60)+"h " : ""}${leftMin%60}m left · next <b>${nxt[0]} ${nxt[2]}</b>`;
+  } else {
+    $("nowTitle").textContent = "Free time"; $("nowSub").textContent = ""; $("nowBar").style.width = "0";
+    $("next").innerHTML = `next <b>${blocks[0][0]} ${blocks[0][2]}</b>`;
+  }
+  $("sched").innerHTML = blocks.filter(b=>b[3]!=="sleep").map((b,i)=>{
+    const on = cur && blocks[cb.i]===b, past = !on && cb.i>=0 && blocks.indexOf(b) < cb.i;
+    return `<div class="${on?"on":past?"past":""}"><span>${b[0]}–${b[1]}</span><span>${b[2]}</span></div>`; }).join("");
+  Object.values(LABEL).forEach(id=>$(id).classList.remove("hl"));
+  if (cur && LABEL[cur[3]]) $(LABEL[cur[3]]).classList.add("hl");
+
+  if (dayKey !== lastDay){ // daily content
+    lastDay = dayKey;
+    $("date").textContent = now.toLocaleDateString(undefined,{weekday:"long", day:"numeric", month:"long", year:"numeric"});
+    $("weekLbl").textContent = info.before ? "Plan starts Mon 16 Nov · preview of day 1" : `Week ${info.weekNo} / ${PLAN_WEEKS} · ${info.phase.name}`;
+    $("weekTitle").innerHTML = info.week.ai.title.replace(/^(\S+)/, "<i>$1</i>");
+    $("dsa").textContent = info.dsa; $("dsaStep").textContent = info.week.dsa.title.replace("A2Z ","");
+    $("ai").textContent = info.ai; $("aiPhase").textContent = info.phase.name;
+    $("aiPhase").style.color = info.phase.color;
+    $("sql").textContent = info.sql; $("proj").textContent = info.week.ai.project;
+    const pct = Math.max(0, Math.min(100, info.dayIdx/info.totalDays*100));
+    $("bar").innerHTML = PHASES.map(p=>`<span style="flex:${p.weeks[1]-p.weeks[0]+1};background:${p.color};opacity:${p.id===info.phase.id?1:.35}"></span>`).join("") + `<i style="left:${pct}%"></i>`;
+    $("pct").textContent = `${Math.round(pct)}% of the plan`;
+    $("left").textContent = `${info.daysLeft} days to job-ready · ${planEndDate().toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}`;
+    $("quote").textContent = "“" + QUOTES[Math.floor(Date.now()/86400000) % QUOTES.length] + "”";
+  }
+}
+tick(); setInterval(tick, 15000);
+
+// dot-wave background (low CPU: ~24fps, small grid)
+const cv = $("cv"), cx = cv.getContext("2d");
+let W, H, DPR;
+function size(){ DPR = Math.min(devicePixelRatio||1, 1.5); W = cv.width = innerWidth*DPR; H = cv.height = innerHeight*DPR; }
+size(); addEventListener("resize", size);
+let t = 0, last = 0;
+function draw(ts){
+  requestAnimationFrame(draw);
+  if (ts - last < 42) return; last = ts; t += 0.012;
+  cx.clearRect(0,0,W,H);
+  const cols = 70, rows = 26;
+  for (let r=0;r<rows;r++){
+    const z = r/rows, persp = 0.35 + z*0.65;
+    for (let c=0;c<cols;c++){
+      const u = c/(cols-1)-0.5;
+      const y0 = Math.sin(u*6 + t*1.3 + z*3)*0.5 + Math.cos(u*3 - t + z*5)*0.5;
+      const x = W*0.62 + u*W*0.85*persp;
+      const y = H*0.38 + z*H*0.62 - y0*H*0.07*persp;
+      const a = (0.12 + 0.55*Math.max(0,y0)) * z;
+      cx.fillStyle = y0 > 0.55 ? `rgba(255,122,69,${a})` : `rgba(236,235,230,${a*0.6})`;
+      cx.fillRect(x, y, 1.6*DPR*persp, 1.6*DPR*persp);
+    }
+  }
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

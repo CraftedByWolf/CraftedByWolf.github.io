@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suriya's AI Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0c;--panel:#141416;--line:#26262a;--text:#ecebe6;--muted:#8d8b85;--accent:#ff7a45;--ok:#7ee0a1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.6 Inter,system-ui,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.mono{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+nav{position:sticky;top:0;background:rgba(11,11,12,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5}
+nav .wrap{display:flex;gap:20px;align-items:center;height:56px}
+nav b{font-weight:600}nav a{color:var(--muted);text-decoration:none;font-size:14px}nav a:hover{color:var(--text)}
+nav .sp{flex:1}
+header{padding:72px 0 40px}
+h1{font:400 clamp(44px,7vw,88px)/1 "Instrument Serif",serif;letter-spacing:-.02em;margin:14px 0 18px}
+h1 i{color:var(--accent)}
+h2{font:400 44px/1.1 "Instrument Serif",serif;margin:8px 0 20px}
+.lead{max-width:640px;color:#c9c7c0;font-size:17px}
+section{padding:48px 0;border-top:1px solid var(--line)}
+.grid{display:grid;gap:14px}
+.today{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{font-size:17px;font-weight:600;margin:6px 0 4px}
+.card p{color:#bdbbb4;font-size:14px}
+.stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:28px}
+.stats div b{font:400 44px/1 "Instrument Serif",serif;display:block}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:18px 0 8px;position:relative}
+.bar span{display:block;height:100%}
+.bar .now{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+details.week{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+details.week[open]{border-color:#3a3a40}
+details.week.cur{border-color:var(--accent)}
+summary{list-style:none;cursor:pointer;padding:14px 18px;display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary .t{font-weight:600}summary .s{color:var(--muted);font-size:13px}
+.pill{font:500 11px "JetBrains Mono",monospace;padding:3px 8px;border-radius:99px;border:1px solid}
+.wk{padding:4px 18px 18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.wk h4{font:500 12px "JetBrains Mono",monospace;color:var(--muted);text-transform:uppercase;margin:10px 0 6px}
+.wk label{display:flex;gap:8px;align-items:flex-start;font-size:14px;padding:3px 0;cursor:pointer}
+.wk label input{margin-top:4px;accent-color:var(--accent)}
+.wk label.done span{color:var(--muted);text-decoration:line-through}
+.wk .full{grid-column:1/-1}
+.prog{font:12px "JetBrains Mono",monospace;color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:8px 10px;border-bottom:1px solid var(--line)}td:first-child{font-family:"JetBrains Mono",monospace;color:var(--muted);white-space:nowrap;width:130px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:none;border:1px solid var(--line);color:var(--muted);padding:6px 14px;border-radius:99px;cursor:pointer;font:inherit;font-size:13px}
+.tabs button.on{color:var(--text);border-color:var(--accent)}
+.rules{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.rules .card b{color:var(--accent);font-family:"JetBrains Mono",monospace;font-size:12px}
+@media(max-width:700px){.wk{grid-template-columns:1fr}summary{grid-template-columns:54px 1fr}summary .pill{display:none}nav a.hide{display:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>SK</b><span class="sp"></span><a href="#today">Today</a><a href="#weeks">Weeks</a><a href="#routine" class="hide">Routine</a><a href="#method" class="hide">Method</a><a href="../index.html">CV</a></div></nav>
+
+<header class="wrap">
+  <div class="mono">● MSc Artificial Intelligence · 30-week plan · 16 Nov 2026 → 13 Jun 2027</div>
+  <h1>From beginner<br>to <i>job-ready.</i></h1>
+  <p class="lead">Three tracks run every day: DSA in Python (Striver's A2Z), the AI track (ML → Deep Learning → NLP → GenAI → RAG → MCP), and SQL on the side. Each phase ends with a deployed project, so by June you have a portfolio, not just certificates.</p>
+  <div class="stats" id="stats"></div>
+  <div class="bar" id="bar"></div>
+  <div class="legend" id="legend"></div>
+</header>
+
+<section id="today"><div class="wrap">
+  <div class="mono" id="todayLabel">Today</div>
+  <h2 id="todayTitle">Today's plan</h2>
+  <div class="grid today" id="todayCards"></div>
+</div></section>
+
+<section id="weeks"><div class="wrap">
+  <div class="mono">The plan</div>
+  <h2>All 30 weeks</h2>
+  <p class="lead" style="margin-bottom:22px">Tick items as you finish them; progress is saved in this browser. Monday to Friday follow the five listed topics, Saturday is project day, Sunday is contest + revision.</p>
+  <div id="weekList"></div>
+</div></section>
+
+<section id="routine"><div class="wrap">
+  <div class="mono">Daily routine</div>
+  <h2>How a day looks</h2>
+  <div class="tabs" id="rtabs"></div>
+  <div class="card"><table id="rtable"></table></div>
+  <p class="mono" style="margin-top:10px;text-transform:none">Shift the times to match your MSc timetable: edit ROUTINE in wallpaper/plan.js and both this page and the wallpaper update.</p>
+</div></section>
+
+<section id="method"><div class="wrap">
+  <div class="mono">How to actually learn it</div>
+  <h2>Rules that make this work</h2>
+  <div class="grid rules">
+    <div class="card"><b>01 · DSA</b><h3>Struggle 30 minutes first</h3><p>Try every A2Z problem alone for 20–30 min: brute force first, then optimise. Only then watch Striver's video. Write the pattern in one line in your notes ("prefix sum + hashmap").</p></div>
+    <div class="card"><b>02 · AI</b><h3>Watch 1×, code 2×</h3><p>Follow the lecture once, then close it and rebuild the code from a blank file. If you can't, you don't know it yet. That's the whole trick.</p></div>
+    <div class="card"><b>03 · Revision</b><h3>1 day, 1 week, 1 month</h3><p>Re-solve each problem 1 day, 7 days and 30 days later. Use the 21:15 block and Sunday for this. Anki cards for formulas and definitions.</p></div>
+    <div class="card"><b>04 · Proof</b><h3>Commit every day</h3><p>Everything goes into your GitHub repo 'ai-journey': notes, notebooks, solutions. Recruiters read green squares and READMEs.</p></div>
+    <div class="card"><b>05 · Projects</b><h3>Ship, don't polish</h3><p>Every phase ends in a deployed project with a README: problem, approach, results table, demo link. Five of those beat twenty certificates.</p></div>
+    <div class="card"><b>06 · Pace</b><h3>Behind? Cut, don't cram</h3><p>If a week overruns, drop the hardest DSA items to Sunday and move on. Keep the AI track on schedule; consistency beats intensity. Protect sleep.</p></div>
+  </div>
+</div></section>
+
+<footer class="wrap" style="padding:40px 20px 60px;color:var(--muted);font-size:13px">Built for Suriya K S · plan data in <code>wallpaper/plan.js</code></footer>
+
+<script src="../wallpaper/plan.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const info = planDayInfo();
+const store = { get(k){ try{ return JSON.parse(localStorage.getItem("sk-roadmap")||"{}")[k]; }catch(e){ return undefined; } },
+  set(k,v){ try{ const o=JSON.parse(localStorage.getItem("sk-roadmap")||"{}"); o[k]=v; localStorage.setItem("sk-roadmap",JSON.stringify(o)); }catch(e){} } };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dayNames = ["Mon","Tue","Wed","Thu","Fri"];
+const fmt = d => d.toLocaleDateString(undefined,{day:"numeric",month:"short"});
+const weekStart = n => { const d=new Date(PLAN_START+"T00:00:00"); d.setDate(d.getDate()+(n-1)*7); return d; };
+
+// stats + phase bar
+const pct = Math.max(0, Math.min(100, info.dayIdx / info.totalDays * 100));
+$("stats").innerHTML = `
+  <div><b>${info.before ? "–" : info.weekNo}<small style="font-size:20px;color:var(--muted)">/30</small></b><span class="mono">week</span></div>
+  <div><b>${info.daysLeft}</b><span class="mono">days to job-ready</span></div>
+  <div><b>${Math.round(pct)}%</b><span class="mono">of the plan done</span></div>
+  <div><b style="color:${info.phase.color}">${info.phase.name}</b><span class="mono">current phase</span></div>`;
+$("bar").innerHTML = PHASES.map(p => `<span style="flex:${p.weeks[1]-p.weeks[0]+1};background:${p.color}"></span>`).join("") + `<i class="now" style="left:${pct}%"></i>`;
+$("legend").innerHTML = PHASES.map(p => `<span><i style="background:${p.color}"></i>${p.name} (wk ${p.weeks[0]}–${p.weeks[1]})</span>`).join("");
+
+// today
+$("todayLabel").textContent = info.before ? "Starts Monday 16 Nov 2026 — here's day 1" : new Date().toDateString();
+$("todayTitle").textContent = `Week ${info.weekNo}: ${info.week.ai.title}`;
+$("todayCards").innerHTML = [
+  ["DSA · " + info.week.dsa.title.replace("A2Z ",""), info.dsa, R_LINK("a2z")],
+  ["AI · " + info.phase.name, info.ai, info.week.ai.res.map(r=>`<a href="${r[1]}" target="_blank">${esc(r[0])}</a>`).join(" · ")],
+  ["SQL", info.sql, `<a href="https://sqlbolt.com" target="_blank">SQLBolt</a> · <a href="https://leetcode.com/studyplan/top-sql-50/" target="_blank">SQL 50</a>`],
+  ["This week's project", info.week.ai.project, ""],
+].map(([h,t,l]) => `<div class="card"><div class="mono">${esc(h)}</div><h3>${esc(t)}</h3><p>${l}</p></div>`).join("");
+function R_LINK(){ return `<a href="https://takeuforward.org/prep-hub/strivers-a2z-dsa-sheet" target="_blank">Open A2Z sheet</a>`; }
+
+// weeks
+$("weekList").innerHTML = WEEKS.map((w,i) => {
+  const n=i+1, p=PHASES.find(x=>x.id===w.phase), cur = n===info.weekNo && !info.before;
+  const items = (track, arr) => arr.map((t,d) => { const k=`${n}-${track}-${d}`, c=store.get(k);
+    return `<label class="${c?"done":""}"><input type="checkbox" data-k="${k}" ${c?"checked":""}><span><b class="mono" style="font-size:11px">${dayNames[d]}</b> ${esc(t)}</span></label>`; }).join("");
+  return `<details class="week${cur?" cur":""}" ${cur?"open":""}>
+    <summary><span class="mono">Wk ${n}<br>${fmt(weekStart(n))}</span><span><span class="t">${esc(w.ai.title)}</span><br><span class="s">${esc(w.dsa.title)} · <span class="prog" data-prog="${n}"></span></span></span><span class="pill" style="color:${p.color};border-color:${p.color}">${p.name}</span></summary>
+    <div class="wk">
+      <div><h4>AI track · 15:00–18:00</h4>${items("ai", w.ai.days)}</div>
+      <div><h4>DSA (Python) · 07:00–09:30</h4>${items("dsa", w.dsa.days)}</div>
+      <div><h4>SQL · 20:30–21:15</h4><label><input type="checkbox" data-k="${n}-sql" ${store.get(n+"-sql")?"checked":""}><span>${esc(w.sql)}</span></label></div>
+      <div><h4>Saturday project</h4><label><input type="checkbox" data-k="${n}-proj" ${store.get(n+"-proj")?"checked":""}><span>${esc(w.ai.project)}</span></label></div>
+      ${w.ai.res.length?`<div class="full"><h4>Resources</h4>${w.ai.res.map(r=>`<a href="${r[1]}" target="_blank">${esc(r[0])}</a>`).join(" · ")}</div>`:""}
+    </div></details>`; }).join("");
+function refreshProg(){ document.querySelectorAll("[data-prog]").forEach(el => { const n=el.dataset.prog;
+  const boxes=document.querySelectorAll(`input[data-k^="${n}-"]`); const d=[...boxes].filter(b=>b.checked).length; el.textContent = `${d}/${boxes.length} done`; }); }
+document.addEventListener("change", e => { const k=e.target.dataset && e.target.dataset.k; if(!k) return;
+  store.set(k, e.target.checked); e.target.closest("label").classList.toggle("done", e.target.checked); refreshProg(); });
+refreshProg();
+
+// routine
+const rnames = {weekday:"Mon–Fri", saturday:"Saturday", sunday:"Sunday"};
+function showRoutine(kind){ $("rtabs").querySelectorAll("button").forEach(b=>b.classList.toggle("on", b.dataset.k===kind));
+  $("rtable").innerHTML = ROUTINE[kind].map(r=>`<tr><td>${r[0]}–${r[1]}</td><td>${esc(r[2])}</td></tr>`).join(""); }
+$("rtabs").innerHTML = Object.keys(rnames).map(k=>`<button data-k="${k}">${rnames[k]}</button>`).join("");
+$("rtabs").onclick = e => e.target.dataset.k && showRoutine(e.target.dataset.k);
+showRoutine(info.kind);
+</script>
+</body>
+</html>
