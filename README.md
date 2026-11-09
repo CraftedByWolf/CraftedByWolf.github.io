@@ -30,7 +30,7 @@ Every day runs three tracks:
 
 ## Changing the routine
 
-Open `wallpaper/plan.js` and edit `ROUTINE` (times are 24h). If you change it after the wallpaper is installed in Lively, re-import the `wallpaper` folder in Lively (Lively keeps its own copy).
+Open `wallpaper/plan.js` and edit `ROUTINE` (times are 24h). Lively keeps its own copy, so then right-click `update-wallpaper.ps1` → Run with PowerShell.
 
 ## Daily habit
 
